@@ -1,0 +1,36 @@
+stages:
+  - build
+  - deploy
+
+#image: node:lts-alpine3.14
+image:
+  name: pandoc/alpine:edge
+  entrypoint: ["/bin/sh", "-c"]
+
+build:
+  stage: build
+  before_script:
+    - apk update 
+    - apk add make
+    - apk add --update nodejs npm 
+    - make prepare
+  script:
+    - make
+  after_script:
+    - mkdir public
+    - cp -r images reveal.js index.html public/
+  artifacts:
+    paths:
+      - public
+
+pages:
+  stage: deploy
+  script:
+    - echo "Skip script section."
+  dependencies:
+    - build
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
