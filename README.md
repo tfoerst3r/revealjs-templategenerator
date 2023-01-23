@@ -1,67 +1,76 @@
+---
+title: revealjs templategenerator
+---
 
-# Useful commands
+# Description
 
-Requirements:
+This tool generates usable reveal.js themes from your peronsal/company layouts. They can be implemented as easily as 
+the default layouts.
 
+Basis for the layouts is your custom `*.scss` file. It will be recompiled with reveal.js in mind and it generats an 
+reveal.js folder which can utilized for your projects and even deployed as a web resource for online projects.
+
+# Requirements:
+
+- npm
 - live-server
 - decktape
+- md2reveal (bash tool by tfoerst3r on github)
 
+# Generating a reveal.js instance (first time)
+
+1) clone/download this project
+1) create your theme in `./custom/theme/`
+1) create additional helper files, if needed in `./custom/templates/`
+1) add needed background images in `./custom/images/`
+1) add needed fonts in `./custom/fonts/`
+1) run `$ make build` (this will build the reveal.js structure)
+1) either use the folder as is or copy it to a global location, like `/opt/`
+
+# Other useful commands
+
+- Updating existing templates (only theme files)
+
+    ~~~
+    $make install_themes
+    ~~~
+
+- Updating existing theme
+
+    ~~~
+    $make themes_compile
+    ~~~
 
 - Run a live server (also allows for video playback)
     
     ~~~
+    $ make show
+    ~~~
+    or
+    ~~~
     $ live-server
     ~~~
 
-- Generate PDF
+- build a presentation (needs corresponding commands in separated file (`script.sh`)
 
     ~~~
-    $ decktape automatic --size 1920x1080 index.html index.pdf
+    $ make presentation
+    ~~~
+    or
+    ~~~
+    $ bash script.sh
     ~~~
 
-- Recompile the custom `*.scss` files
+- remove all not needed files for using the reveal.js
 
     ~~~
-    $ make themes_compile
+    $ make clean-working
     ~~~
 
-# Tray
+- remove all all files installed by build 
 
-## PDF
-
-~~~
-DTAPP ?= $(HOME)/node_modules/.bin/decktape
-OUTPUTPDF ?= $(shell basename $(PWD))-$(USER).pdf 
-~~~
-
-~~~
-#----------------#
-#-- pdf output --#
-#----------------#
-#prepared_for_pdfs :
-#	npm install decktape
-#
-#
-#pandoc_theme.html :
-#	pandoc -D revealjs > pandoc_theme.html
-#
-##TODO: try to obtain the name of the repo
-##      and use it for the pdf name
-#$(OUTPUTPDF): index.pdf
-#	cp -v $< $@
-#
-#pdf: $(OUTPUTPDF)
-#
-#%.pdf : %.html prepared_for_pdfs
-#	$(DTAPP) --pdf-author steinb95 --pdf-title $(shell basename $(PWD)) reveal $<\?fragments=true $@
-#
-#print_images: index.md
-#	grep '\!\[' index.md|grep -v 'http'|sed -e 's@.*(\(.*\)).*@\1@'|sed -e 's/{\(.*\)}/\1/'
-#	grep 'data-background-image' index.md|sed -e 's@.*image="\(.*\)" .*@\1@'
-#
-#add_images:
-#	git add -f -v `grep '\!\[' index.md|grep -v http|sed -e 's@.*(\(.*\)).*@\1@'|sed -e 's/{\(.*\)}/\1/'`
-#	git add -f -v `grep 'data-background-image' index.md|sed -e 's@.*image="\(.*\)" .*@\1@'`
-~~~
+    ~~~
+    $ make clean
+    ~~~
 
 
