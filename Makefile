@@ -3,6 +3,7 @@
 #=========================#
 #-- Installation of reveal.js
 REVEALJS           ?= reveal.js
+REVEALJSDEPLOY     ?= $(REVEALJS)_deploy
 REVEALJS_WEBSOURCE ?= https://github.com/hakimel/reveal.js/archive/master.zip 
 REVEALJS_ZIPFILE   ?= reveal-latest.zip 
 REVEALJS_MODULES   ?= $(REVEALJS)/node_modules
@@ -12,19 +13,23 @@ THEMEFILES    ?= $(wildcard ./custom/themes/*.scss)
 TEMPLATEFILES ?= $(wildcard ./custom/templates/*.scss)
 IMAGEFILES    ?= $(wildcard ./custom/images/*)
 FONTFILES     ?= $(wildcard ./custom/fonts/*)
-
+PLUGINFOLDERS ?= ./custom/plugins/*
 #-- Build presentation
 BUILD_PRES ?= script.sh
 #override dependent ?= 3
 #override slide-level ?= 2
 #override input ?= index.md
 #override background ?= ""
+override to ?= /opt/reveal.js
+
 
 #-- Location where to copy files
 IMAGES_DEST_FOLDER   ?= ./$(REVEALJS)/dist/theme/images/
 FONTS_DEST_FOLDER    ?= ./$(REVEALJS)/dist/theme/fonts/
 THEME_DEST_FOLDER    ?= ./$(REVEALJS)/css/theme/source/
 TEMPLATE_DEST_FOLDER ?= ./$(REVEALJS)/css/theme/template/
+PLUGIN_DEST_FOLDER   ?= ./$(REVEALJS)/plugin/
+
 
 #=================================#
 #======= MAIN -- md2reveal =======#
@@ -46,7 +51,7 @@ build: $(REVEALJS) $(REVEALJS_MODULES) install_themes
 #-- REVEAL.JS INSTALLATION --#
 #----------------------------#
 $(REVEALJS_MODULES): $(REVEALJS) $(REVEALJS_ZIPFILE)
-	cd $(REVEALJS) && npm install --unsafe-perm
+	cd $(REVEALJS) && npm install --unsafe-perm 
 
 $(REVEALJS): $(REVEALJS_ZIPFILE) 
 	unzip $(REVEALJS_ZIPFILE)
@@ -63,6 +68,7 @@ install_themes : \
 	scss_copy \
 	images_copy \
 	fonts_copy \
+	plugin_copy \
 	themes_compile
 
 #-- scss --#
@@ -80,21 +86,31 @@ fonts_copy:
 	mkdir -p  $(FONTS_DEST_FOLDER)
 	cp -rv $(FONTFILES) $(FONTS_DEST_FOLDER)
 
+plugin_copy:
+	cp -rv $(PLUGINFOLDERS) $(PLUGIN_DEST_FOLDER)	
+
 #-- scss compiling --#
 themes_compile: scss_copy
 	cd $(REVEALJS) && npm run build -- css-themes
 
-clean-working: save-base clean restore-base
+#==============================#
+#======= MAIN -- DEPLOY =======#
+#==============================#
+deploy: clean-deploy
+	ln -s $(to) tmp_$(REVEALJS)
+	cd tmp_$(REVEALJS) && rm -rf *
+	cp -r ./$(REVEALJSDEPLOY)/* tmp_$(REVEALJS)/
+	rm tmp_$(REVEALJS)
+	rm -rfv $(REVEALJSDEPLOY)
 
-save-base:
-	cd $(REVEALJS) && mv dist/ plugin/ .. 
-	mv index.html index.html.backup
+clean-deploy:
+	mkdir $(REVEALJSDEPLOY) && cd $(REVEALJS) && mv dist/ plugin/ ../$(REVEALJSDEPLOY)
 
-restore-base:	
-	mkdir $(REVEALJS) && mv dist/ plugin/ $(REVEALJS)
-	mv index.html.backup index.html
+#=============================#
+#======= MAIN -- CLEAN =======#
+#=============================#
 
-clean: 
+clean:
 	rm -rfv $(REVEALJS)
 	rm -fv  $(REVEALJS_ZIPFILE)
 	rm -fv *.pdf

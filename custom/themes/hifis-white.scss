@@ -43,19 +43,11 @@ $linkColorHover: lighten( $linkColor, 20% );
 
 /* Presentation background */
 @mixin bodyBackground() {
-	//background: $backgroundColor;
-    //background-image: url('images/logo-hifis.svg');
-    //background-size: auto 5.5%;
-    //background-repeat: no-repeat;
-    //background-position: 93% 6.0%; /*top right bottom left*/
-	
 	background: $backgroundColor;
-	background-image: url(images/hifis-background.svg);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: 0% 0%;
-
-
+    background-image: url('images/logo-hifis.svg'), url('images/hifis-footer.svg');
+    background-size: auto 5.5%, 100% auto;
+    background-repeat: no-repeat, no-repeat;
+    background-position: 95% 5.9%, 0 100%; /*top right bottom left*/
 }
 
 //== LOADING DEFAULT THEME SETTINGS ======================
@@ -66,7 +58,7 @@ $linkColorHover: lighten( $linkColor, 20% );
 //== CUSTOM THEME SETTINGS ===============================
 /* Variables */
 $imageHeight: 1080px;
-$textindent: 64px;
+$textindent: 24px;
 $titlepadding: 8%;
 $slidespacingTop: 3.2em;
 $slidespacingBottom: 3.2em;
@@ -109,7 +101,7 @@ section {
 .reveal h1, 
 .reveal h2 {
     position: fixed;
-    top: 46px;
+    top: 20px;
     left: $textindent;
     text-align: left;
     text-transform: capitalize;
@@ -163,8 +155,7 @@ p.date {
     align: left;
 }
 
-.blockquote {
-    display: inline;
+.blockquote{
     text-align: justify;
     width: auto;
     color: $grey1;
@@ -175,6 +166,7 @@ p.date {
     padding: 2%;
     margin:2%;
 }
+
 //.blockquote::before {
 //  content: '<<';
 //}
